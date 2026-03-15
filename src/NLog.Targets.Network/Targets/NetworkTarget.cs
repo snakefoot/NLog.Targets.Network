@@ -695,7 +695,7 @@ namespace NLog.Targets
 
         internal X509Certificate2Collection? LoadSslCertificateFromFile(string sslCertificateFile, string sslCertificatePassword)
         {
-            if (string.IsNullOrEmpty(sslCertificateFile))
+            if (sslCertificateFile is null || string.IsNullOrEmpty(sslCertificateFile))
                 return null;    // NOSONAR
 
             if (_certificateCache != null && _certificateCache.TryGetValue(sslCertificateFile, out var clientCertificates))
@@ -708,11 +708,7 @@ namespace NLog.Targets
                     if (_certificateCache?.TryGetValue(sslCertificateFile, out clientCertificates) == true)
                         return clientCertificates;
 
-                    if (string.IsNullOrEmpty(sslCertificateFile))
-                    {
-                        clientCertificates = new X509Certificate2Collection();
-                    }
-                    else if (sslCertificateFile.EndsWith(".pem", StringComparison.OrdinalIgnoreCase))
+                    if (sslCertificateFile.EndsWith(".pem", StringComparison.OrdinalIgnoreCase))
                     {
                         InternalLogger.Debug("{0}: Loading SSL certificate from PEM-file: {1}", this, sslCertificateFile);
                         var clientCertificate = LoadCertificateFromPem(sslCertificateFile);
